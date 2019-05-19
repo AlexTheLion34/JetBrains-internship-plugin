@@ -56,7 +56,7 @@ public class Manager implements ProjectComponent {
             }
         }
         configFileName = UNKNOWN;
-        return "This is unknown plugin";
+        return "This is unknown project";
     }
 
     private void openConfigFile() {
