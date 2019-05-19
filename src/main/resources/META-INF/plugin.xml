@@ -1,0 +1,21 @@
+<idea-plugin>
+    <id>com.AlexTheLion.JetBrains-internship-plugin</id>
+    <name>Plugin display name here</name>
+    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+
+    <description><![CDATA[
+    Enter short description for your plugin here.<br>
+    <em>most HTML tags may be used</em>
+    ]]></description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+
+    <depends>com.intellij.modules.lang</depends>
+
+    <project-components>
+    <component>
+        <implementation-class>project.Manager</implementation-class>
+    </component>
+</project-components>
+</idea-plugin>
