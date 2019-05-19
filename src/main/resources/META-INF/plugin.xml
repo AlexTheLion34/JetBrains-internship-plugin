@@ -14,8 +14,9 @@
     <depends>com.intellij.modules.lang</depends>
 
     <project-components>
-    <component>
-        <implementation-class>project.Manager</implementation-class>
-    </component>
-</project-components>
+        <component>
+            <implementation-class>plugin.Manager</implementation-class>
+        </component>
+    </project-components>
+
 </idea-plugin>
