@@ -1,17 +1,15 @@
 <idea-plugin>
     <id>com.AlexTheLion.JetBrains-internship-plugin</id>
-    <name>Plugin display name here</name>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <name>Project type detector</name>
+    <vendor email="alx_pet@mail.ru">Aleksey Petrenko</vendor>
 
-    <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
-    ]]></description>
+    <description>
+        This plugin checks type of project (Maven/Gradle/Unknown)
+        and show a notification with link to pom.xml or
+        build.gradle file.
+    </description>
 
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-         on how to target different products -->
-
-    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.java</depends>
 
     <project-components>
         <component>
