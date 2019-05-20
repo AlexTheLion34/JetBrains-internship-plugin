@@ -3,6 +3,7 @@ package plugin;
 import com.intellij.notification.*;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
@@ -28,14 +29,18 @@ public class Manager implements ProjectComponent {
     @Override
     public void projectOpened() {
 
-        Notification notification = new Notification("ProjectOpenNotification",
-                                                     "Project type",
-                                                      defineDependencyManager(),
-                                                      NotificationType.INFORMATION);
-        notification.notify(myProject);
+        DumbService.getInstance(myProject).runWhenSmart(() -> {
 
-        if (!configFileName.equals(UNKNOWN))
-            notification.addAction(NotificationAction.createSimple(configFileName, this::openConfigFile));
+            Notification notification = new Notification("ProjectOpenNotification",
+                    "Project type",
+                    defineDependencyManager(),
+                    NotificationType.INFORMATION);
+
+            if (!configFileName.equals(UNKNOWN))
+                notification.addAction(NotificationAction.createSimple(configFileName, this::openConfigFile));
+
+            notification.notify(myProject);
+        });
     }
 
     private String defineDependencyManager() {
@@ -65,13 +70,13 @@ public class Manager implements ProjectComponent {
                                                      .getVirtualFilesByName(myProject,
                                                                             configFileName,
                                                                             GlobalSearchScope.projectScope(myProject)));
-
         String projectBaseDirectory = myProject.getBaseDir().getPath();
 
-        Optional<VirtualFile> mainConfigFile = allConfigFiles.stream()
-                                                  .filter(file -> file.getPath()
+        Optional<VirtualFile> rootConfigFile = allConfigFiles.stream()
+                                                  .filter(file ->
+                                                          file.getPath()
                                                                   .contains(projectBaseDirectory + "/" + configFileName))
                                                   .findFirst();
-        mainConfigFile.ifPresent(virtualFile -> new OpenFileDescriptor(myProject, virtualFile).navigate(true));
+        rootConfigFile.ifPresent(virtualFile -> new OpenFileDescriptor(myProject, virtualFile).navigate(true));
     }
 }
