@@ -12,15 +12,11 @@ import com.intellij.psi.search.GlobalSearchScope;
 import java.io.File;
 import java.util.*;
 
+import static plugin.ProjectType.*;
+
 public class Manager implements ProjectComponent {
 
     private final Project myProject;
-
-    private final String POM = "pom.xml";
-    private final String GRADLE = "build.gradle";
-    private final String UNKNOWN = "unknown";
-
-    private String configFileName;
 
     public Manager(Project project) {
         myProject = project;
@@ -31,19 +27,22 @@ public class Manager implements ProjectComponent {
 
         DumbService.getInstance(myProject).runWhenSmart(() -> {
 
+            ProjectType type = defineProjectType();
+
             Notification notification = new Notification("ProjectOpenNotification",
                     "Project type",
-                    defineDependencyManager(),
+                    type.getMessage(),
                     NotificationType.INFORMATION);
 
-            if (!configFileName.equals(UNKNOWN))
-                notification.addAction(NotificationAction.createSimple(configFileName, this::openConfigFile));
+            if (type != UNKNOWN)
+                notification.addAction(NotificationAction.createSimple(type.getFileName(),
+                                                                    () -> openConfigFile(type.getFileName())));
 
             notification.notify(myProject);
         });
     }
 
-    private String defineDependencyManager() {
+    private ProjectType defineProjectType() {
 
         String basePath = myProject.getBasePath();
 
@@ -51,20 +50,18 @@ public class Manager implements ProjectComponent {
             File projectDirectory = new File(basePath);
             List<String> configFiles = new ArrayList<>(Arrays.asList(Objects.requireNonNull(projectDirectory.list())));
 
-            if (configFiles.contains(POM)) {
-                configFileName = POM;
-                return "This is Maven project";
+            if (configFiles.contains(POM.getFileName())) {
+                return POM;
             }
-            if (configFiles.contains(GRADLE)) {
-                configFileName = GRADLE;
-                return "This is Gradle project";
+            if (configFiles.contains(GRADLE.getFileName())) {
+                return GRADLE;
             }
         }
-        configFileName = UNKNOWN;
-        return "This is unknown project";
+
+        return UNKNOWN;
     }
 
-    private void openConfigFile() {
+    private void openConfigFile(String configFileName) {
 
         List<VirtualFile> allConfigFiles = new ArrayList<>(FilenameIndex
                                                      .getVirtualFilesByName(myProject,
